@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <div class="container">
+        <br>
+
+        <!-- Displaying Add, delete, edited messages -->
+        {% for message in messages %}
+            <div class="alert alert-warning alert-dismissable" role="alert">
+                <button class="close" data-dismiss="alert">
+                    <small><sup>x</sup></small></button>
+                {{message }}
+            </div>
+        {% endfor %}
+        <!--End of Displaying Add, delete, edited messages -->
+
+        <!-- Display ToDos of Given Date -->
+        <div align="right">
+
+                <form method="POST"  action="/">
+                    {% csrf_token %}
+                    <input type="date" name="dates" id="dates">
+                    <button type="submit"  class="btn btn-success">Submit</button>
+                    </form>
+            </div>
+        <!-- End of Display ToDos of Given Date -->
+
+
+        <!-- Form to Add new items for today -->
+        <form action="/addTodoItem/" method="post" >
+            {% csrf_token %}
+            <div style="padding-top: 17px;" align="center">
+                <input type="text" name="content"> &nbsp;&nbsp;
+                <button type="submit"  class="btn btn-success">
+                <span class="glyphicon glyphicon-plus"></span>&nbsp;Add ToDo Item</button>
+            </div>
+
+            <br>
+        </form>
+        <!-- End of Form to Add new items for today -->
+
+        <!-- Button for Adding Future Task, Displaying Future and Pending tasks -->
+        <div align="center">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#Addfuturetask">
+            Add Future Task
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#Pendingtask">
+              Pending Tasks
+            </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#Futuretask" align="center">
+              Future Tasks
+            </button>
+        </div>
+        <!--End of Button for Adding Future Task, Displaying Future and Pending tasks -->
+
+
+        <!-- Adding Future task Modal-->
+        <div class="modal fade" id="Addfuturetask" tabindex="-1" role="dialog" aria-labelledby="Addfuturetask" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="Addfuturetitle">Pending Tasks</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                 <form action="/addFutureTask/" method="post" >
+                    {% csrf_token %}
+                    <div style="padding-top: 17px;" align="center">
+                        <font style="font-size:25px; font-style:bold;" >Task Name:&nbsp;&nbsp;</font><input type="text" name="task"> &nbsp;&nbsp;<br><br><br>
+                        <font style="font-size:20px; font-style:bold;" > Date:&nbsp;&nbsp; </font><input type="date" name="date" id="date" min="{{ today }}"><br><br><br>
+                        <button type="submit"  class="btn btn-success">
+                        <span class="glyphicon glyphicon-plus"></span>&nbsp;Add Future Item</button>
+                    </div>
+
+                    <br>
+                 </form>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--End of Adding Future task Modal-->
+
+
+        <!-- Pending Tasks-->
+        <div class="modal fade" id="Pendingtask" tabindex="-1" role="dialog" aria-labelledby="Pendingtask" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="Pendingtitle">Pending Tasks</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <table class="table table-bordered">
+                    {% for i in items %}
+                    <tr>
+                                    <td align="center"><a href="{% url 'edit' i.id%}"><div style="font-size:30px;" align="center"> {{i.item}}
+                                    <small class="text-muted" style="font-size:13px;">{{ i.date }}</small></div></a></td>
+
+                                    <td align="center"><form action="/cross_off/{{i.id}}/" method="post" >{% csrf_token  %}
+                                        <button type="submit"  class="btn btn-success" style="height:18px; width:85px;">
+                                        Cross Off</button>
+                                        </form>
+                                    </td>
+
+                                   <td align="center"><form action="/deleteTodoItem/{{i.id}}/" method="post">{% csrf_token  %}
+                                        <button type="submit"  class="btn btn-success" style="height:18px; width:85px;">
+                                        <span class="glyphicon glyphicon-remove"></span>&nbsp;Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                     {% endfor %}
+                </table>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--End of Pending Task-->
+
+
+        <!-- Future Task -->
+
+        <div class="modal fade" id="Futuretask" tabindex="-1" role="dialog" aria-labelledby="Futuretask" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="futuretitle">Future Tasks</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+
+                    <table class="table table-bordered" >
+
+               {% for i in future %}
+                   {% if i.completed %}
+                   <!-- if the task is done -->
+                       <tr class="table-secondary">
+
+                           <td align="center" ><a href="{% url 'edit' i.id %}"><div style="font-size:30px;" align="center"><del> {{i.item}}
+                               <small class="text-muted" style="font-size:13px;">{{ i.date }}</small> </del></div></a></td>
+
+                           <td align="center"><form action="/uncross/{{i.id}}/" method="post" >{% csrf_token  %}
+                            <button type="submit"  class="btn btn-success" style="height:18px; width:85px;">
+                            Uncross</button>
+                           </form></td>
+
+                           <td align="center"><form action="/deleteTodoItem/{{i.id}}/" method="post">{% csrf_token  %}
+                            <button type="submit"  class="btn btn-success" style="height:18px; width:85px;">
+                            <span class="glyphicon glyphicon-remove"></span>&nbsp;Delete</button>
+                                </form>
+                           </td>
+                       </tr>
+
+
+                   {% else %}
+                   <!-- if the task is not done -->
+                       <tr>
+                            <td align="center"><a href="{% url 'edit' i.id%}"><div style="font-size:30px;" align="center"> {{i.item}}
+                            <small class="text-muted" style="font-size:13px;">{{ i.date }}</small></div></a></td>
+
+                            <td align="center"><form action="/cross_off/{{i.id}}/" method="post" >{% csrf_token  %}
+                                <button type="submit"  class="btn btn-success" style="height:18px; width:85px;">
+                                Cross Off</button>
+                                </form>
+                            </td>
+
+                           <td align="center"><form action="/deleteTodoItem/{{i.id}}/" method="post">{% csrf_token  %}
+                                <button type="submit"  class="btn btn-success" style="height:18px; width:85px;">
+                                <span class="glyphicon glyphicon-remove"></span>&nbsp;Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+
+                   {% endif %}
+               {% endfor %}
+               </table>
+                </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        <!-- End of Future Tasks-->
+
+
+        <!-- Displaying the List-->
+        {% if dates %}
+        <p align="center" style="font-size:30px;">{{ dates }} List</p>
+        {% else %}
+        <p align="center" style="font-size:30px;">{{ today }} List</p>
+        {% endif %}
+
+               <table class="table table-bordered" >
+
+               {% for i in all_items %}
+                   {% if i.completed %}
+                   <!-- if the task is done -->
+                       <tr class="table-secondary">
+
+                           <td align="center" ><a href="{% url 'edit' i.id %}"><div style="font-size:30px;" align="center"><del> {{i.item}}
+                               <small class="text-muted" style="font-size:13px;">{{ i.date }}</small> </del></div></a></td>
+
+                           <td align="center"><form action="/uncross/{{i.id}}/" method="post" >{% csrf_token  %}
+                            <button type="submit"  class="btn btn-success" style="height:18px; width:85px;">
+                            Uncross</button>
+                           </form></td>
+
+                           <td align="center"><form action="/deleteTodoItem/{{i.id}}/" method="post">{% csrf_token  %}
+                            <button type="submit"  class="btn btn-success" style="height:18px; width:85px;">
+                            <span class="glyphicon glyphicon-remove"></span>&nbsp;Delete</button>
+                                </form>
+                           </td>
+                       </tr>
+
+
+                   {% else %}
+                   <!-- if the task is not done -->
+                       <tr>
+                            <td align="center"><a href="{% url 'edit' i.id%}"><div style="font-size:30px;" align="center"> {{i.item}}
+                            <small class="text-muted" style="font-size:13px;">{{ i.date }}</small></div></a></td>
+
+                            <td align="center"><form action="/cross_off/{{i.id}}/" method="post" >{% csrf_token  %}
+                                <button type="submit"  class="btn btn-success" style="height:18px; width:85px;">
+                                Cross Off</button>
+                                </form>
+                            </td>
+
+                           <td align="center"><form action="/deleteTodoItem/{{i.id}}/" method="post">{% csrf_token  %}
+                                <button type="submit"  class="btn btn-success" style="height:18px; width:85px;">
+                                <span class="glyphicon glyphicon-remove"></span>&nbsp;Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+
+                   {% endif %}
+               {% endfor %}
+               </table>
+
+        <!--End of Displaying the List-->
+
+
+
+    </div>
+{% endblock content %}

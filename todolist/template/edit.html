@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+
+        <br>
+        <!-- Displaying Add, delete, edited messages -->
+        {% for message in messages %}
+            <div class="alert alert-warning alert-dismissable" role="alert">
+                <button class="close" data-dismiss="alert">
+                    <small><sup>x</sup></small></button>
+                    {{message }}
+            </div>
+        {% endfor %}
+
+        <br>
+           <table class="table table-bordered" >
+               {% if item %}
+                   <tr class="table-secondary">
+                       <td align="center" >
+                           <div style="font-size:30px;" align="center">
+                               <!-- form for editing item -->
+                               <form action="{% url 'edit' item.id %}" method="post" >
+                                {% csrf_token %}
+                                       <input type="text" name="content" value="{{item.item}}">
+                                       <button type="submit"  class="btn btn-success">
+                    <span class="glyphicon glyphicon-plus"></span>&nbsp; Edit</button>
+                               </form>
+                           </div>
+                       </td>
+               {% endif %}
+           </table>
+    </div>
+{% endblock content %}

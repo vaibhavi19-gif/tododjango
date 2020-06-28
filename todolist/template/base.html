@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Todolist</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+                <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+                <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+                <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    </head>
+
+    <style>
+        h1{
+        background-color:yellow;
+        padding-top: 13px;
+        padding-bottom: 13px;
+        margin:0px;
+        border-radius:15px;
+        box-shadow: 2px 2px 5px black;
+        transform: translate(0px,20px);
+        }
+
+        input[type="text"]{
+        width:300px;
+        height:38px;
+        border-radius:5px;
+        box-shadow: 2px 2px 5px black;
+
+        }
+        button{
+            box-shadow: 2px 2px 2px;
+            
+        }
+
+        button:hover{
+            transform: scale(1.2);
+
+        }
+        
+       #today{
+        width:130px;
+        height:24px;
+        box-shadow: 2px 2px 5px black;
+        padding-bottom: 25px;
+        }
+
+        #ok{
+            background-color: green;
+        }
+
+        #right1, #right2{
+            padding-top: 30px;
+            background-color: black;
+        }
+    </style>
+
+    <body>
+            <!-- Navbar -->
+            <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+                        <a href="{% url 'home' %}" class="nav-link" style="font-size:30px; color:white;">
+                            <span class="glyphicon glyphicon-th-list" style="font-size:30px;"></span>&nbsp;TO DO LIST
+                        </a>
+
+                <!-- displaying current date -->
+<!--                {% if today %}-->
+<!--                        <a  style="font-size:15px; color:white; padding-left:20px;">{{ today }}</a>-->
+<!--                {% endif %}-->
+                <a style="font-size:15px; color:white; padding-left:720px;">
+                <form method="POST" action="/">
+                {% csrf_token %}
+                        <input type="date" name="dates" value="{{ today }}" min="{{ today }}" max = "{{ today }}" style="visibility: hidden;">
+                    <button type="submit" class="btn btn-success" id="today">Today</button>
+                    </form>
+            </a>
+
+            </nav>
+            {% block content %}
+
+            {% endblock content %}
+
+    </body>
+</html>
