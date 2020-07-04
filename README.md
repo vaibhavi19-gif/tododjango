@@ -33,9 +33,9 @@ python manage.py runserver
 
 # Authors
 
-- Vaibhavi Kundle
-@vaibhavi19
-- Rasika Joshi
+
+@vaibhavi19-gif
+
 @rasika2112
   
 
